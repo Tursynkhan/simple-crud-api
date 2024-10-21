@@ -15,6 +15,7 @@ export const getUserById = (res: ServerResponse, userId: string) => {
   }
 
   const user = db.getUserById(userId);
+  
   if (!user) {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ message: 'User not found' }));
@@ -26,20 +27,30 @@ export const getUserById = (res: ServerResponse, userId: string) => {
 
 export const createUser = (req: IncomingMessage, res: ServerResponse) => {
   let body = '';
+
   req.on('data', chunk => {
     body += chunk.toString();
   });
+
   req.on('end', () => {
-    const { username, age, hobbies } = JSON.parse(body);
+    try {
+      const { username, age, hobbies } = JSON.parse(body);
 
-    if (!username || !age || !Array.isArray(hobbies)) {
+      if (!username || typeof age !== 'number' || !Array.isArray(hobbies)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ message: 'Invalid user data. Required fields: username, age, hobbies.' }));
+      }
+
+      const newUser = db.createUser(username, age, hobbies);
+
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(newUser));
+    } catch (error) {
+      console.error('Error parsing request body:', error);
+
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ message: 'Invalid user data' }));
+      return res.end(JSON.stringify({ message: 'Invalid JSON format.' }));
     }
-
-    const newUser = db.createUser(username, age, hobbies);
-    res.writeHead(201, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(newUser));
   });
 };
 

@@ -7,7 +7,7 @@ interface User {
   hobbies: string[];
 }
 
-let users: User[] = [];
+const users: User[] = [];
 
 export const db = {
   getAllUsers: () => users,
