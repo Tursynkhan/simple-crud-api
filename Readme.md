@@ -31,7 +31,7 @@ This project is a basic CRUD API built using Node.js and TypeScript. The API pro
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/simple-crud-api.git
+   git clone https://github.com/tursynkhan/simple-crud-api.git
    ```
    ```
    cd simple-crud-api
